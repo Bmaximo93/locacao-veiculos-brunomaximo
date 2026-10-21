@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const usuarioRoutes = require("./routes/usuarioRoutes");
+const veiculoRoutes = require("./routes/veiculoRoutes");
 const rotaNaoEncontrada = require("./middlewares/rotaNaoEncontrada");
 const tratarErros = require("./middlewares/tratarErros");
 
@@ -14,6 +15,7 @@ app.get("/", (request, response) => {
 });
 
 app.use("/usuarios", usuarioRoutes);
+app.use("/veiculos", veiculoRoutes);
 
 app.use(rotaNaoEncontrada);
 app.use(tratarErros);
