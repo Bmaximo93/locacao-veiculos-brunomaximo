@@ -1,0 +1,73 @@
+@baseUrl = http://localhost:3000
+@token = cole_aqui_o_token_retornado_no_login
+
+### Cadastrar usuário
+POST {{baseUrl}}/usuarios
+Content-Type: application/json
+
+{
+    "nome": "Maria Silva",
+    "email": "maria@email.com",
+    "senha": "123456"
+}
+
+### Login
+POST {{baseUrl}}/usuarios/login
+Content-Type: application/json
+
+{
+    "email": "demo@locadora.com",
+    "senha": "123456"
+}
+
+### Perfil do usuário autenticado
+GET {{baseUrl}}/usuarios/perfil
+Authorization: Bearer {{token}}
+
+### Listar todos os veículos
+GET {{baseUrl}}/veiculos
+Authorization: Bearer {{token}}
+
+### Listar apenas veículos disponíveis
+GET {{baseUrl}}/veiculos?disponivel=true
+Authorization: Bearer {{token}}
+
+### Buscar veículo por id
+GET {{baseUrl}}/veiculos/1
+Authorization: Bearer {{token}}
+
+### Cadastrar veículo
+POST {{baseUrl}}/veiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "marca": "Renault",
+    "modelo": "Kwid",
+    "placa": "BRA2E19",
+    "ano": 2023,
+    "valorDiaria": 95.5
+}
+
+### Registrar locação
+POST {{baseUrl}}/locacoes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "veiculoId": 1,
+    "dataInicio": "2026-11-10T10:00:00",
+    "dataPrevistaDevolucao": "2026-11-12T12:00:00"
+}
+
+### Listar minhas locações
+GET {{baseUrl}}/locacoes
+Authorization: Bearer {{token}}
+
+### Buscar locação por id
+GET {{baseUrl}}/locacoes/1
+Authorization: Bearer {{token}}
+
+### Finalizar locação
+PATCH {{baseUrl}}/locacoes/1/finalizar
+Authorization: Bearer {{token}}
