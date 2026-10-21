@@ -4,6 +4,7 @@ import Mensagem from "./components/Mensagem";
 import Login from "./components/Login";
 import Cadastro from "./components/Cadastro";
 import Veiculos from "./components/Veiculos";
+import Locacoes from "./components/Locacoes";
 import { buscarPerfil } from "./services/api";
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     const [telaAuth, setTelaAuth] = useState("login");
     const [mensagem, setMensagem] = useState(null);
     const [aba, setAba] = useState("veiculos");
+    const [veiculoEscolhido, setVeiculoEscolhido] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -23,6 +25,16 @@ function App() {
 
     function mostrarMensagem(tipo, texto) {
         setMensagem({ tipo, texto });
+    }
+
+    function trocarAba(novaAba) {
+        setVeiculoEscolhido(null);
+        setAba(novaAba);
+    }
+
+    function alugarVeiculo(veiculo) {
+        setVeiculoEscolhido(veiculo);
+        setAba("locacoes");
     }
 
     function sair() {
@@ -59,15 +71,26 @@ function App() {
                         <button
                             type="button"
                             className={aba === "veiculos" ? "aba-ativa" : ""}
-                            onClick={() => setAba("veiculos")}
+                            onClick={() => trocarAba("veiculos")}
                         >
                             Veículos
+                        </button>
+                        <button
+                            type="button"
+                            className={aba === "locacoes" ? "aba-ativa" : ""}
+                            onClick={() => trocarAba("locacoes")}
+                        >
+                            Minhas locações
                         </button>
                     </nav>
                 )}
 
                 {usuario && aba === "veiculos" && (
-                    <Veiculos onAlugar={() => {}} mostrarMensagem={mostrarMensagem} />
+                    <Veiculos onAlugar={alugarVeiculo} mostrarMensagem={mostrarMensagem} />
+                )}
+
+                {usuario && aba === "locacoes" && (
+                    <Locacoes veiculoEscolhido={veiculoEscolhido} mostrarMensagem={mostrarMensagem} />
                 )}
             </main>
         </>
