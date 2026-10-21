@@ -2,6 +2,9 @@ const prisma = require("../databases/prisma");
 const veiculoService = require("./VeiculoService");
 const DataInvalidaError = require("../errors/DataInvalidaError");
 const VeiculoIndisponivelError = require("../errors/VeiculoIndisponivelError");
+const LocacaoNaoEncontradaError = require("../errors/LocacaoNaoEncontradaError");
+const AcessoNegadoError = require("../errors/AcessoNegadoError");
+const LocacaoJaFinalizadaError = require("../errors/LocacaoJaFinalizadaError");
 
 const UM_DIA_EM_MS = 24 * 60 * 60 * 1000;
 
@@ -49,6 +52,58 @@ class LocacaoService {
         });
 
         return locacao;
+    }
+
+    async findMany(usuarioId) {
+        const locacoes = await prisma.locacao.findMany({
+            where: { usuarioId: usuarioId },
+            include: { veiculo: true },
+            orderBy: { id: "desc" }
+        });
+        return locacoes;
+    }
+
+    async findById(id, usuarioId) {
+        const locacao = await prisma.locacao.findUnique({
+            where: { id: id },
+            include: { veiculo: true }
+        });
+        if (!locacao) {
+            throw new LocacaoNaoEncontradaError();
+        }
+        if (locacao.usuarioId !== usuarioId) {
+            throw new AcessoNegadoError();
+        }
+        return locacao;
+    }
+
+    async finalizar(id, usuarioId) {
+        const locacao = await this.findById(id, usuarioId);
+        if (locacao.status === "FINALIZADA") {
+            throw new LocacaoJaFinalizadaError();
+        }
+
+        const locacaoFinalizada = await prisma.$transaction(async (tx) => {
+            const resultado = await tx.locacao.updateMany({
+                where: { id: id, status: "ATIVA" },
+                data: { status: "FINALIZADA", dataDevolucao: new Date() }
+            });
+            if (resultado.count === 0) {
+                throw new LocacaoJaFinalizadaError();
+            }
+
+            await tx.veiculo.update({
+                where: { id: locacao.veiculoId },
+                data: { disponivel: true }
+            });
+
+            return tx.locacao.findUnique({
+                where: { id: id },
+                include: { veiculo: true }
+            });
+        });
+
+        return locacaoFinalizada;
     }
 }
 
