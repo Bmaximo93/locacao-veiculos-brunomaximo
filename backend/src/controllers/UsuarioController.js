@@ -11,6 +11,10 @@ class UsuarioController {
         const { token, usuario } = await usuarioService.login(request.body);
         return response.status(200).json({ token, usuario });
     }
+
+    async perfil(request, response) {
+        return response.status(200).json({ usuario: request.usuario });
+    }
 }
 
 module.exports = new UsuarioController();
