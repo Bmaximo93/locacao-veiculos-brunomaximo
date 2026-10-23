@@ -93,8 +93,8 @@ Relacionamentos: um `Usuario` possui várias `Locacao` (1:N) e um `Veiculo` poss
 ### 1. Clonar o repositório
 
 ```bash
-git clone <url-do-repositorio>
-cd locacao-veiculos
+git clone https://github.com/Bmaximo93/locacao-veiculos-brunomaximo.git
+cd locacao-veiculos-brunomaximo
 ```
 
 ### 2. Criar o banco de dados
